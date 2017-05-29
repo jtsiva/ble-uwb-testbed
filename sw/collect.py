@@ -43,7 +43,7 @@ def save(error, data, devID, note = ""):
 		If error is true then file is saved to the 'bad' directory
 		with a note
 	"""
-	prefix = "data_collection/"
+	prefix = "../data_collection/"
 	discard = "bad/"
 	now = datetime.utcnow()
 	fileName = str(toTimestamp(now)) + ".txt"
