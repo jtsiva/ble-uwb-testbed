@@ -1,2 +1,6 @@
 app_id
 app_token
+ids
+uuids
+beacons
+uwb-tmp-anchors
