@@ -58,7 +58,7 @@ def save(error, data, devID, note = ""):
 	print fullPath
 
 	with open(fullPath, "w") as f:
-		f.write("#" + str(now) + "\n")
+		f.write("#v2 " + str(now) + "\n")
 		f.write("#" + devID + "\n")
 		f.write("#" + note + "\n")
 		for entry in data:
@@ -98,15 +98,19 @@ def collect (dev, numSamples):
 	if "UWB" == dev:
 		ser = serial.Serial('/dev/ttyUSB0', 115200)
 		for line in ser:
-			things = line.split(":")
+			measures = line.split(',')
+			things = measures[0].split(":")
 			if things[0] == "Range":
-				data = things[1]
+				data1 = things[1]
 				# if len(window) >= 1:
 				# 	del window[0]
 
+			things = measures[1].split(':')
+			if things[0] == "RXpower":
+				data2 = things[1]
 				print '.',
 				sys.stdout.flush()
-				samples.append(float(data)) #only number on line
+				samples.append((float(data1), float(data2))) #dist and rx power in tuple
 				count += 1
 
 			if count == numSamples:
@@ -129,67 +133,39 @@ def collect (dev, numSamples):
 		
 	
 		child.kill()
+
 	return samples
 
 def main():
-	response = 'c'
-
-	while (response == 'c'):
-		print "1) Test UWB"
-		print "2) Test Estimote"
-		devChoice = int(raw_input("Choose what to test: "))
-
-		if 1 == devChoice:
-			dev = "UWB"
-			devList = {}
-			devList [dev] = dev
-		else:
-			devList = getDevicesToTest()
-
-			for i, dev in enumerate (devList):
-				print str(i) + ") " + str(dev)
-
-			dev = int (raw_input("Select device to test: "))
-			if 0 > dev or len (devList) <= dev:
-				print "Bad selection"
-				break
-
-		dist = float(raw_input ("Distance: "))
-		if dist < 0:
-			print "Not possible"
-			break
-
-		temp = raw_input ("Number of samples (default = 50) ")
-		if '' == temp:
-			numSamples = 50
-		else:
-			numSamples = int (temp)
+	if len(sys.argv) < 3:
+		print "usage: collect.py dev #-samples dist"
+		exit()
+	else:
+		dev = sys.argv[1]
+		numSamples = int(sys.argv[2])
+		dist = float(sys.argv[3])
 
 		print ""
 		print "Settings for test:"
 		print "************************************"
-		print "DUT: " + devList[dev]
+		print "DUT: " + dev
 		print "Distance: " + str(dist)
 		print "Number of samples: " + str(numSamples)
 		print "************************************"
 
-		val = raw_input("Press Enter to continue or q to quit...")
-		if 'q' == val:
-			pass
-		else:
-			samples = collect (devList[dev], numSamples)
-			preview(samples)
+		try:
+			print "Press ctrl + c to quit...",
+			for x in range(3):
+				print ".",
+				sleep(1)
 			print ""
-			doSave = raw_input("Save results (y/n): ");
-			if 'y' == doSave.lower():
-				note = raw_input("Add'l note? ")
-				save(False, samples, devList[dev], str(dist) + " " + note)
-			else:
-				note = raw_input("Reason for rejection? ");
-				save (True, samples, devList[dev], note)
+		except KeyboardInterrupt:
+			exit()
 
-		print ""
-		response = raw_input("[c]ontinue or [q]uit? ")
+		samples = collect (dev, numSamples)
+		save(False, samples, devList[dev], str(dist) + " " + note)
+
+		#preview(samples)
 
 
 if __name__ == "__main__":
