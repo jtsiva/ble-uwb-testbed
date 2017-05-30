@@ -175,7 +175,7 @@ def main():
 			exit()
 
 		samples = collect (dev, numSamples)
-		save(False, samples, dev, str(dist) + " " + note)
+		save(False, samples, dev, str(dist))
 
 		#preview(samples)
 
