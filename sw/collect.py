@@ -162,9 +162,11 @@ def main():
 
 		try:
 			print "Press ctrl + c to quit...",
-			for x in range(3):
+			sys.stdout.flush()
+			for x in range(5):
 				print ".",
-				sleep(1)
+				sys.stdout.flush()
+				time.sleep(1)
 			print ""
 		except KeyboardInterrupt:
 			exit()
