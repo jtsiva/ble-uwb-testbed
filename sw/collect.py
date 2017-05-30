@@ -137,14 +137,20 @@ def collect (dev, numSamples):
 	return samples
 
 def main():
-	print sys.argv
-	if len(sys.argv) < 3:
-		print "usage: collect.py dev #-samples dist"
+	if len(sys.argv) < 2:
+		print "usage: collect.py param-file"
 		exit()
 	else:
-		dev = sys.argv[1]
-		numSamples = int(sys.argv[2])
-		dist = float(sys.argv[3])
+		with open(sys.argv[1]) as f:
+			for line in f:
+				name = line.split('=')[0].strip()
+				value = line.split('=')[1].strip()
+				if "dev" == name:
+					dev = value
+				elif "samples" == name:
+					numSamples = int(value)
+				elif "distance" == name:
+					dist = float(value)
 
 		print ""
 		print "Settings for test:"
