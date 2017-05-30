@@ -72,14 +72,14 @@ def getDevicesToTest ():
 	devCount = 0
 
 	while devCount == 0: 
-		child = subprocess.Popen (['node', 'scan.js'], stdout=subprocess.PIPE)
+		child = subprocess.Popen (['node', 'sw/scan.js'], stdout=subprocess.PIPE)
 		time.sleep (5) # search for 5 seconds
 		child.kill ()
 		for line in child.stdout:
 			things = line.split()
 
 			query  = "" + things[0] + " " + things[1] + " " + things[2] + ""
-			proc = subprocess.Popen(['grep', query, 'ids'], stdout=subprocess.PIPE)
+			proc = subprocess.Popen(['grep', query, 'sw/ids'], stdout=subprocess.PIPE)
 			streamdata = proc.communicate()[0]
 			if 0 == proc.returncode:
 				devCount += 1
@@ -118,7 +118,7 @@ def collect (dev, numSamples):
 				break
 		#child = subprocess.Popen (['python', 'collect_uwb.py'], stdout=subprocess.PIPE)
 	else:
-		child = subprocess.Popen (['node', 'scan.js'], stdout=subprocess.PIPE)
+		child = subprocess.Popen (['node', 'sw/scan.js'], stdout=subprocess.PIPE)
 	
 		while count < numSamples:
 			sys.stdout.flush()
@@ -126,7 +126,7 @@ def collect (dev, numSamples):
 			line = child.stdout.readline()
 			sys.stdout.flush()
 				
-			if dev in line:
+			if devLookup[dev] in line:
 				print '.',
 				samples.append(int(line.split()[-2]))
 				count += 1
@@ -151,6 +151,9 @@ def main():
 					numSamples = int(value)
 				elif "distance" == name:
 					dist = float(value)
+
+		if dev != "UWB":
+			getDevicesToTest();
 
 		print ""
 		print "Settings for test:"
