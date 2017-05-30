@@ -126,7 +126,7 @@ def collect (dev, numSamples):
 			line = child.stdout.readline()
 			sys.stdout.flush()
 				
-			if devLookup[dev] in line:
+			if dev in line:
 				print '.',
 				samples.append(int(line.split()[-2]))
 				count += 1
@@ -172,7 +172,7 @@ def main():
 			exit()
 
 		samples = collect (dev, numSamples)
-		save(False, samples, devList[dev], str(dist) + " " + note)
+		save(False, samples, dev, str(dist) + " " + note)
 
 		#preview(samples)
 
