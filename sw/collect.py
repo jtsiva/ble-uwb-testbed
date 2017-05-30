@@ -137,6 +137,7 @@ def collect (dev, numSamples):
 	return samples
 
 def main():
+	print sys.argv
 	if len(sys.argv) < 3:
 		print "usage: collect.py dev #-samples dist"
 		exit()
