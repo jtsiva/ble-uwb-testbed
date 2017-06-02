@@ -98,24 +98,25 @@ def collect (dev, numSamples):
 	if "UWB" == dev:
 		ser = serial.Serial('/dev/ttyUSB0', 115200)
 		for line in ser:
-			measures = line.split(',')
-			things = measures[0].split(":")
-			if things[0] == "Range":
-				data1 = things[1]
-				# if len(window) >= 1:
-				# 	del window[0]
+			if "Range" in line:
+				measures = line.split(',')
+				things = measures[0].split(":")
+				if things[0] == "Range":
+					data1 = things[1]
+					# if len(window) >= 1:
+					# 	del window[0]
 
-			things = measures[1].split(':')
-			if things[0] == "RXpower":
-				data2 = things[1]
-				print '.',
-				sys.stdout.flush()
-				samples.append((float(data1), float(data2))) #dist and rx power in tuple
-				count += 1
+				things = measures[1].split(':')
+				if things[0] == "RXpower":
+					data2 = things[1]
+					print '.',
+					sys.stdout.flush()
+					samples.append((float(data1), float(data2))) #dist and rx power in tuple
+					count += 1
 
-			if count == numSamples:
-				ser.close()
-				break
+				if count == numSamples:
+					ser.close()
+					break
 		#child = subprocess.Popen (['python', 'collect_uwb.py'], stdout=subprocess.PIPE)
 	else:
 		child = subprocess.Popen (['node', 'sw/scan.js'], stdout=subprocess.PIPE)
