@@ -146,6 +146,8 @@ def main():
 			for line in f:
 				name = line.split('=')[0].strip()
 				value = line.split('=')[1].strip()
+				value = value.strip("\"")
+				value = value.strip()
 				if "dev" == name:
 					dev = value
 				elif "samples" == name:
